@@ -1,6 +1,6 @@
 param location string = resourceGroup().location
 
-resource createUserScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
+resource dScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'createUserScript'
   location: location
   kind: 'AzurePowerShell'

@@ -7,7 +7,7 @@ param subnetMaskSize int = 24
 
 var vnetName = 'vnet-${suffix}'
 
-resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
+resource vnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
   name: vnetName
   location: location
   properties: {
@@ -21,7 +21,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
 
 resource subnets 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = [
   for i in range(0, subnetCount): {
-    parent: virtualNetwork
+    parent: vnet
     name: 'subnet-${i}'
     properties: {
       addressPrefix: cidrSubnet(vnetAddressSpace, subnetMaskSize, i)

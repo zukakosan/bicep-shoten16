@@ -27,17 +27,14 @@ param adminPassword string
 @description('The security rules for the network security group')
 var securityRules = loadJsonContent('./nsgrules/rules.json')
 
-@description('The SKU for the app service plan')
-var appServicePlanSku = 'S1'
-
 var nsgName = 'nsg-${suffix}'
 var vnetName = 'vnet-${suffix}'
 var publicIpName = 'pip-${suffix}'
 var vmName = 'vm-${suffix}'
 var strgName = 'strg${uniqueString(resourceGroup().id)}${suffix}'
-var cognitiveServiceName = 'aoai${uniqueString(resourceGroup().id)}${suffix}'
-var appServicePlanName = 'asp-${uniqueString(resourceGroup().id)}${suffix}'
-var appServiceName = 'apps-${uniqueString(resourceGroup().id)}${suffix}'
+var aoaiName = 'aoai${uniqueString(resourceGroup().id)}${suffix}'
+var aspName = 'asp-${uniqueString(resourceGroup().id)}${suffix}'
+var appsName = 'apps-${uniqueString(resourceGroup().id)}${suffix}'
 
 resource nsg 'Microsoft.Network/networkSecurityGroups@2023-04-01' = {
   name: nsgName
@@ -150,8 +147,8 @@ resource strgAcct 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-resource AOAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
-  name: cognitiveServiceName
+resource aoai 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+  name: aoaiName
   location: location
   sku: {
     name: 'S0'
@@ -165,19 +162,19 @@ resource AOAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
 }
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
-  name: appServicePlanName
+  name: aspName
   location: location
   properties: {
     reserved: true
   }
   sku: {
-    name: appServicePlanSku
+    name: 'S1'
   }
   kind: 'linux'
 }
 
 resource appService 'Microsoft.Web/sites@2022-09-01' = {
-  name: appServiceName
+  name: appsName
   location: location
   properties: {
     serverFarmId: appServicePlan.id
@@ -185,11 +182,11 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
       appSettings: [
         {
           name: 'AZURE_OPENAI_SERVICE_KEY'
-          value: AOAI.listKeys().key1
+          value: aoai.listKeys().key1
         }
         {
           name: 'AZURE_OPENAI_SERVICE_ENDPOINT'
-          value: AOAI.properties.endpoint
+          value: aoai.properties.endpoint
         }
         {
           name: 'STORAGE_ACCOUNT_KEY'
