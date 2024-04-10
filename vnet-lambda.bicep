@@ -1,6 +1,13 @@
 param location string = resourceGroup().location
 param suffix string = 'zukako'
 
+param subnetNames array = [
+  'AzureFirewallSubent'
+  'AzureBastionSubnet'
+  'ApplicationGatewaySubnet'
+  'subnet-workload'
+  'subnet-management'
+]
 param subnetCount int = 5
 param vnetAddressSpace string = '10.0.0.0/16'
 param subnetMaskSize int = 24
@@ -27,6 +34,5 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
   }
 }
 
-// 必要なサブネットの id は VNet のプロパティとして参照できる
-// 以下は Microsoft.Network/virtualNetworks/vnet-zukako/subnets/subnet-0 を出力
+// output subnetId string = filter(virtualNetwork.properties.subnets, s => s.name == subnetName)[0].id
 output subnetId string = virtualNetwork.properties.subnets[0].id

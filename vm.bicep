@@ -44,10 +44,6 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
       }
     ]
   }
-  // 本当はこう書きたいわけじゃないですが、都合上...。
-  resource subnet1 'subnets' existing = {
-    name: 'subnet-1'
-  }
 }
 
 resource publicIp 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
@@ -74,7 +70,8 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
             id: publicIp.id
           }
           subnet: {
-            id: virtualNetwork::subnet1.id
+            // VM を 0 番目のサブネットに配置する
+            id: virtualNetwork.properties.subnets[0].id
           }
         }
       }
