@@ -11,3 +11,6 @@ $ az group create -n <RESOURCE_GROUP_NAME> -l <LOCATION>
 // deploy bicep template
 $ az deployment group create -g <RESOURCE_GROUP_NAME> --template-file <PATH_TO_TEMPLATE> [--parameters <PATH_TO_PARAMETER_FILE>]
 ```
+
+# License
+This project is licensed under the MIT License, see the LICENSE.txt file for details.

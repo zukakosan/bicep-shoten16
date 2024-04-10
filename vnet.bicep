@@ -7,7 +7,7 @@ param subnetMaskSize int = 24
 
 var vnetName = 'vnet-${suffix}'
 
-resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
+resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
   name: vnetName
   location: location
   properties: {
