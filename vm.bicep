@@ -14,9 +14,6 @@ var securityRules = loadJsonContent('./nsgrules/rules.json')
 var vnetName = 'vnet-${suffix}'
 var publicIpName = 'pip-${suffix}'
 var vmName = 'vm-${suffix}'
-var cognitiveServiceName = 'aoai${uniqueString(resourceGroup().id)}${suffix}'
-var appServicePlanName = 'asp-${uniqueString(resourceGroup().id)}${suffix}'
-var appServiceName = 'apps-${suffix}'
 
 resource nsg 'Microsoft.Network/networkSecurityGroups@2023-04-01' = {
   name: nsgName

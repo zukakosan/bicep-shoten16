@@ -1,12 +1,12 @@
 param location string = resourceGroup().location
 param suffix string = 'zukako'
 
-var cognitiveServiceName = 'aoai${uniqueString(resourceGroup().id)}${suffix}'
-var appServicePlanName = 'asp-${uniqueString(resourceGroup().id)}${suffix}'
-var appServiceName = 'apps-${uniqueString(resourceGroup().id)}${suffix}'
+var aoaiName = 'aoai${uniqueString(resourceGroup().id)}${suffix}'
+var aspName = 'asp-${uniqueString(resourceGroup().id)}${suffix}'
+var appsName = 'apps-${uniqueString(resourceGroup().id)}${suffix}'
 
-resource AOAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
-  name: cognitiveServiceName
+resource aoai 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+  name: aoaiName
   location: location
   sku: {
     name: 'S0'
@@ -20,7 +20,7 @@ resource AOAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
 }
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
-  name: appServicePlanName
+  name: aspName
   location: location
   properties: {
     reserved: true
@@ -32,7 +32,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
 }
 
 resource appService 'Microsoft.Web/sites@2022-09-01' = {
-  name: appServiceName
+  name: appsName
   location: location
   properties: {
     serverFarmId: appServicePlan.id
@@ -40,11 +40,11 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
       appSettings: [
         {
           name: 'AZURE_OPENAI_SERVICE_KEY'
-          value: AOAI.listKeys().key1
+          value: aoai.listKeys().key1
         }
         {
           name: 'AZURE_OPENAI_SERVICE_ENDPOINT'
-          value: AOAI.properties.endpoint
+          value: aoai.properties.endpoint
         }
       ]
     }
