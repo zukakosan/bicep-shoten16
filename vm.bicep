@@ -1,7 +1,13 @@
 param location string = resourceGroup().location
 param suffix string = 'zukako'
 
-param subnetCount int = 5
+param subnetNames array = [
+  'AzureFirewallSubent'
+  'AzureBastionSubnet'
+  'ApplicationGatewaySubnet'
+  'subnet-workload'
+  'subnet-management'
+]
 param vnetAddressSpace string = '10.0.0.0/16'
 param subnetMaskSize int = 24
 
@@ -33,20 +39,13 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
       ]
     }
     subnets: [
-      for i in range(0, subnetCount): {
-        name: 'subnet-${i}'
+      for (subnet, i) in subnetNames: {
+        name: subnet
         properties: {
           addressPrefix: cidrSubnet(vnetAddressSpace, subnetMaskSize, i)
-          networkSecurityGroup: {
-            id: nsg.id
-          }
         }
       }
     ]
-  }
-  // 本当はこう書きたいわけじゃないですが、都合上...。
-  resource subnet1 'subnets' existing = {
-    name: 'subnet-1'
   }
 }
 
@@ -74,7 +73,7 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
             id: publicIp.id
           }
           subnet: {
-            id: virtualNetwork::subnet1.id
+            id: filter(virtualNetwork.properties.subnets, subnet => subnet.name == 'subnet-workload')[0].id
           }
         }
       }

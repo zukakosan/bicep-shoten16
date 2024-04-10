@@ -26,3 +26,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
     ]
   }
 }
+
+// 必要なサブネットの id は VNet のプロパティとして参照できる
+// 以下は Microsoft.Network/virtualNetworks/vnet-zukako/subnets/subnet-0 を出力
+output subnetId string = virtualNetwork.properties.subnets[0].id

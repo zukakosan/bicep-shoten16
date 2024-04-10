@@ -13,7 +13,7 @@ param subnetMaskSize int = 24
 
 var vnetName = 'vnet-${suffix}'
 
-resource vnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
+resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
   name: vnetName
   location: location
   properties: {
@@ -22,15 +22,15 @@ resource vnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
         vnetAddressSpace
       ]
     }
+    subnets: [
+      for (subnet, i) in subnetNames: {
+        name: subnet
+        properties: {
+          addressPrefix: cidrSubnet(vnetAddressSpace, subnetMaskSize, i)
+        }
+      }
+    ]
   }
 }
 
-resource subnets 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = [
-  for i in range(0, subnetCount): {
-    parent: vnet
-    name: 'subnet-${i}'
-    properties: {
-      addressPrefix: cidrSubnet(vnetAddressSpace, subnetMaskSize, i)
-    }
-  }
-]
+output subnetId string = filter(virtualNetwork.properties.subnets, subnet => subnet.name == 'subnet-workload')[0].id
