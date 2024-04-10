@@ -1,7 +1,13 @@
 param location string = resourceGroup().location
 param suffix string = 'zukako'
 
-param subnetCount int = 5
+param subnetNames array = [
+  'AzureFirewallSubent'
+  'AzureBastionSubnet'
+  'ApplicationGatewaySubnet'
+  'subnet-workload'
+  'subnet-management'
+]
 param vnetAddressSpace string = '10.0.0.0/16'
 param subnetMaskSize int = 24
 
