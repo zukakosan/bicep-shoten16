@@ -3,7 +3,7 @@ param suffix string = 'zukako'
 
 var cognitiveServiceName = 'aoai${uniqueString(resourceGroup().id)}${suffix}'
 var appServicePlanName = 'asp-${uniqueString(resourceGroup().id)}${suffix}'
-var appServiceName = 'apps-${suffix}'
+var appServiceName = 'apps-${uniqueString(resourceGroup().id)}${suffix}'
 
 resource AOAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   name: cognitiveServiceName
@@ -26,7 +26,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
     reserved: true
   }
   sku: {
-    name: 'F1'
+    name: 'S1'
   }
   kind: 'linux'
 }
@@ -41,6 +41,10 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
         {
           name: 'AZURE_OPENAI_SERVICE_KEY'
           value: AOAI.listKeys().key1
+        }
+        {
+          name: 'AZURE_OPENAI_SERVICE_ENDPOINT'
+          value: AOAI.properties.endpoint
         }
       ]
     }

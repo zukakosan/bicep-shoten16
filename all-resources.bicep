@@ -1,22 +1,43 @@
+
+@description('The location to create the resources')
 param location string = resourceGroup().location
+
+@description('The suffix to append to the resources that will be created')
 param suffix string = 'zukako'
 
+@description('The number of subnets to create in the virtual network')
+@minValue(1)
+@maxValue(10)
 param subnetCount int = 5
+
+@description('The address space for the virtual network')
 param vnetAddressSpace string = '10.0.0.0/16'
+
+@description('The size of the subnet mask to use for the subnets')
+@minValue(24)
 param subnetMaskSize int = 24
 
+@description('The admin username for the virtual machine')
 param adminUserName string
+
 @secure()
+@description('The admin password for the virtual machine')
 param adminPassword string
 
-var nsgName = 'nsg-${suffix}'
+@description('The security rules for the network security group')
 var securityRules = loadJsonContent('./nsgrules/rules.json')
+
+@description('The SKU for the app service plan')
+var appServicePlanSku = 'S1'
+
+var nsgName = 'nsg-${suffix}'
 var vnetName = 'vnet-${suffix}'
 var publicIpName = 'pip-${suffix}'
 var vmName = 'vm-${suffix}'
+var strgName = 'strg${uniqueString(resourceGroup().id)}${suffix}'
 var cognitiveServiceName = 'aoai${uniqueString(resourceGroup().id)}${suffix}'
 var appServicePlanName = 'asp-${uniqueString(resourceGroup().id)}${suffix}'
-var appServiceName = 'apps-${suffix}'
+var appServiceName = 'apps-${uniqueString(resourceGroup().id)}${suffix}'
 
 resource nsg 'Microsoft.Network/networkSecurityGroups@2023-04-01' = {
   name: nsgName
@@ -114,6 +135,65 @@ resource windowsVM 'Microsoft.Compute/virtualMachines@2023-09-01' = {
       networkInterfaces: [
         {
           id: nic.id
+        }
+      ]
+    }
+  }
+}
+
+resource strgAcct 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+  name: strgName
+  location: location
+  kind: 'StorageV2'
+  sku: {
+    name: 'Standard_LRS'
+  }
+}
+
+resource AOAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+  name: cognitiveServiceName
+  location: location
+  sku: {
+    name: 'S0'
+  }
+  kind: 'OpenAI'
+  properties: {
+    apiProperties: {
+      statisticsEnabled: false
+    }
+  }
+}
+
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+  name: appServicePlanName
+  location: location
+  properties: {
+    reserved: true
+  }
+  sku: {
+    name: appServicePlanSku
+  }
+  kind: 'linux'
+}
+
+resource appService 'Microsoft.Web/sites@2022-09-01' = {
+  name: appServiceName
+  location: location
+  properties: {
+    serverFarmId: appServicePlan.id
+    siteConfig: {
+      appSettings: [
+        {
+          name: 'AZURE_OPENAI_SERVICE_KEY'
+          value: AOAI.listKeys().key1
+        }
+        {
+          name: 'AZURE_OPENAI_SERVICE_ENDPOINT'
+          value: AOAI.properties.endpoint
+        }
+        {
+          name: 'STORAGE_ACCOUNT_KEY'
+          value: strgAcct.listKeys().keys[0].value
         }
       ]
     }
