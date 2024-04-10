@@ -1,7 +1,7 @@
 param location string = resourceGroup().location
 param suffix string = 'zukako'
 
-var aoaiName = 'aoai${uniqueString(resourceGroup().id)}${suffix}'
+var aoaiName = 'aoai-${uniqueString(resourceGroup().id)}${suffix}'
 var aspName = 'asp-${uniqueString(resourceGroup().id)}${suffix}'
 var appsName = 'apps-${uniqueString(resourceGroup().id)}${suffix}'
 

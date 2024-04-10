@@ -32,7 +32,7 @@ var vnetName = 'vnet-${suffix}'
 var publicIpName = 'pip-${suffix}'
 var vmName = 'vm-${suffix}'
 var strgName = 'strg${uniqueString(resourceGroup().id)}${suffix}'
-var aoaiName = 'aoai${uniqueString(resourceGroup().id)}${suffix}'
+var aoaiName = 'aoai-${uniqueString(resourceGroup().id)}${suffix}'
 var aspName = 'asp-${uniqueString(resourceGroup().id)}${suffix}'
 var appsName = 'apps-${uniqueString(resourceGroup().id)}${suffix}'
 
