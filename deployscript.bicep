@@ -7,7 +7,7 @@ resource dScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '/subscriptions/42edd95d-ae8d-41c1-ac55-40bf336687b4/resourceGroups/nonproject/providers/Microsoft.ManagedIdentity/userAssignedIdentities/bicep-script': {}
+      '{YOUR-MANAGED-ID-RESOURCE-ID}': {}
     }
   }
   properties: {
