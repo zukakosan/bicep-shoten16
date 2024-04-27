@@ -2,7 +2,7 @@ param location string = resourceGroup().location
 param suffix string = 'zukako'
 
 param subnetNames array = [
-  'AzureFirewallSubent'
+  'AzureFirewallSubnet'
   'AzureBastionSubnet'
   'ApplicationGatewaySubnet'
   'subnet-workload'
