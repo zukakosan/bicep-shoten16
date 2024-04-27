@@ -2,7 +2,7 @@ param location string = resourceGroup().location
 param suffix string = 'zukako'
 
 param subnetNames array = [
-  'AzureFirewallSubent'
+  'AzureFirewallSubnet'
   'AzureBastionSubnet'
   'ApplicationGatewaySubnet'
   'subnet-workload'
@@ -43,6 +43,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
         name: subnet
         properties: {
           addressPrefix: cidrSubnet(vnetAddressSpace, subnetMaskSize, i)
+          networkSecurityGroup: !(subnet == 'AzureFirewallSubnet' || subnet == 'AzureBastionSubnet') ? { id: nsg.id } : null
         }
       }
     ]

@@ -7,7 +7,7 @@ param suffix string = 'zukako'
 
 @description('The names of the subnets to create in the virtual network')
 param subnetNames array = [
-  'AzureFirewallSubent'
+  'AzureFirewallSubnet'
   'AzureBastionSubnet'
   'ApplicationGatewaySubnet'
   'subnet-workload'
@@ -62,6 +62,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
         name: subnet
         properties: {
           addressPrefix: cidrSubnet(vnetAddressSpace, subnetMaskSize, i)
+          networkSecurityGroup: !(subnet == 'AzureFirewallSubnet' || subnet == 'AzureBastionSubnet') ? { id: nsg.id } : null
         }
       }
     ]
